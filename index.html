@@ -28,7 +28,20 @@
             font-family: "Abhaya Libre", serif;
             font-weight: 500;
             font-style: normal;
+        }
 
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.9;
+            z-index: 0;
+            width: 90vw;
+            height: 90vh;
+            background: url('./Drama\ Logo\ \(si\)-01.png') no-repeat center center;
+            background-size: contain;
+            pointer-events: none; /* Ensures watermark doesn't interfere with interactions */
         }
 
         .content {
@@ -423,10 +436,47 @@
             height: auto;
             display: block;
         }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 20px;
+            color: #ffffff;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin: 0 10px;
+            align-items: center;
+            justify-content: center;
+            display: inline-block;
+        }
+
+        .logo1 {
+            background-image: url('./logo.png');
+        }
+        .logo3 {
+            background-image: url('./media-logo.png');
+        }
+
+        .logo2 {
+            background-image: url('./drama-logo.png');
+        }
+
+        footer i {
+            font-style: italic;
+            font-size: smaller;
+        }
     </style>
 </head>
 
 <body>
+    <div class="watermark"></div>
     <div class="content">
     <div class="container">
         <div class="card">
@@ -504,6 +554,19 @@
                     <div id="error-message" class="error-message"></div>
                     <div id="qrcode-container"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <footer>
+        <div class="logo logo1"></div>
+        <div class="logo logo2"></div>
+        <div class="logo logo3"></div>
+        <p>&copy; Rangawatharanaya Drama Festival - 2025<br>All rights reserved.<br><i>PMVMU</i></p>
+    </footer>
+</div>
+
 
                 <!-- <div id="verify-section" class="section">
                 <div id="reader"></div>

@@ -13,40 +13,70 @@
         rel="stylesheet">
 
     <style>
+        /* Universal box-sizing for easier layout management */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Prevents body from scrolling behind the overlay */
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: url("scene-theater-background-drama-performance-vector-52581416.avif");
+            background: url("./scene-theater-background-drama-performance-vector-52581416.avif"); /* Using a placeholder URL for the background */
             background-attachment: fixed;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            min-height: 100vh;
             font-family: "Abhaya Libre", serif;
             font-weight: 500;
             font-style: normal;
+        }
 
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.9;
+            z-index: 0;
+            width: 90vw;
+            height: 90vh;
+            background: url('./Drama\ Logo\ \(si\)-01.png') no-repeat center center;
+            background-size: contain;
+            pointer-events: none; /* Ensures watermark doesn't interfere with interactions */
         }
 
         .content {
             background: rgba(0, 0, 0, 0.573);
             border-radius: 20px;
             padding: 30px;
-            width: 100vw;
-            height: 100vh;
-            overflow-y: auto;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto; /* Allows content to scroll if it exceeds screen height */
             position: fixed;
+            top: 0;
+            left: 0;
             backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px); /* For Safari support */
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
+            padding: 20px 0; /* Adds some vertical space for scrolling on small devices */
         }
 
         .card {
             background: rgba(68, 68, 68, 0.119);
             border: 2px solid rgba(245, 245, 245, 0.546);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* For Safari support */
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -73,8 +103,9 @@
             font-family: "Maname", serif;
             font-weight: 800;
             font-style: italic;
-            padding: 10px;
+            padding-bottom: 10px;
             border-bottom: 4px solid #ffff00;
+            margin-bottom: 20px;
         }
 
         h3 {
@@ -115,6 +146,10 @@
             font-size: 14px;
             line-height: 1.6;
         }
+        
+        ul li {
+            margin-bottom: 8px; /* Adds a bit of space between list items */
+        }
 
         p {
             color: #ffffff;
@@ -127,10 +162,88 @@
             color: #ffffff;
             text-decoration: underline;
         }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 20px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin: 0 10px;
+            align-items: center;
+            justify-content: center;
+            display: inline-block;
+        }
+
+        .logo1 {
+            background-image: url('./logo.png');
+        }
+        .logo3 {
+            background-image: url('./media-logo.png');
+        }
+
+        .logo2 {
+            background-image: url('./drama-logo.png');
+        }
+
+        footer i {
+            font-style: italic;
+            font-size: smaller;
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+
+        /* For Tablets and smaller devices */
+        @media (max-width: 992px) {
+            .card {
+                padding: 25px;
+            }
+        }
+
+        /* For Mobile Phones */
+        @media (max-width: 768px) {
+            .content {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 36px; /* Reduced font size for mobile */
+                border-bottom-width: 3px;
+            }
+
+            h3 {
+                font-size: 18px;
+            }
+
+            h2 {
+                font-size: 16px;
+            }
+
+            h4 {
+                font-size: 15px;
+            }
+
+            ul, p {
+                font-size: 13px;
+            }
+        }
+
     </style>
 </head>
 
 <body>
+    <div class="watermark"></div>
     <div class="content">
         <div class="container">
             <div class="card">
@@ -157,4 +270,16 @@
                 </ul><br><hr><br>
                 <p>වැඩි විස්තර සඳහා<br> WhatsApp : <b><a href="https://wa.me/94724229837" target="_blank">+94 72 422 9837</a></b><br>Call : <b><a href="tel:+94724229837">+94 72 422 9837</a></b></p>
                 <br><hr><br>
-                            <h3>ඔබට සුභ දවසක්..!</h3>
+                <h3>ඔබට සුභ දවසක්..!</h3>
+            </div>
+        </div>
+        <footer>
+            <div class="logo logo1"></div>
+            <div class="logo logo2"></div>
+            <div class="logo logo3"></div>
+            <p>&copy; Rangawatharanaya Drama Festival - 2025<br>All rights reserved.<br><i>PMVMU</i></p>
+        </footer>
+    </div>
+</body>
+
+</html>
