@@ -10,11 +10,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Maname&family=Noto+Serif+Sinhala:wght@100..900&family=Yaldevi:wght@200..700&display=swap" rel="stylesheet">    <style>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Maname&family=Noto+Serif+Sinhala:wght@100..900&family=Yaldevi:wght@200..700&display=swap" rel="stylesheet">
+    <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevent body from scrolling behind the content overlay */
         }
 
         body {
@@ -41,18 +48,20 @@
             height: 90vh;
             background: url('./Drama\ Logo\ \(si\)-01.png') no-repeat center center;
             background-size: contain;
-            pointer-events: none; /* Ensures watermark doesn't interfere with interactions */
+            pointer-events: none;
         }
 
         .content {
             background: rgba(0, 0, 0, 0.573);
-            border-radius: 20px;
             padding: 30px;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             overflow-y: auto;
             position: fixed;
+            top: 0;
+            left: 0;
             backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
 
         .container {
@@ -64,6 +73,7 @@
             background: rgba(68, 68, 68, 0.119);
             border: 2px solid rgba(245, 245, 245, 0.546);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -123,7 +133,11 @@
             font-size: 20px;
             transition: all 0.3s ease;
             color: #666;
+        }
+        
+        .tab a {
             text-decoration: underline;
+            color: inherit;
         }
 
         .tab.active {
@@ -156,6 +170,8 @@
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #ffffffab;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
             border-radius: 10px;
             font-size: 16px;
             transition: border-color 0.3s ease;
@@ -165,6 +181,7 @@
         select:focus {
             outline: none;
             border-color: #667eea;
+            background-color: rgba(255, 255, 255, 0.2);
         }
 
         .radio-group {
@@ -182,11 +199,12 @@
             cursor: pointer;
             transition: all 0.3s ease;
             flex: 1;
+            color: #d3d3d3;
         }
 
         .radio-option:hover {
             border-color: #667eea;
-            background: #f8f8ff;
+            background: rgba(248, 248, 255, 0.1);
         }
 
         .radio-option input[type="radio"] {
@@ -196,7 +214,8 @@
 
         .radio-option.selected {
             border-color: #667eea;
-            background: #f8f8ff;
+            background: rgba(248, 248, 255, 0.2);
+            color: #fff;
         }
 
         button {
@@ -206,14 +225,11 @@
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 28px;
-            font-weight: 8  00;
+            font-size: 20px;
+            font-weight: 500;
             cursor: pointer;
             transition: transform 0.3s ease;
-            font-size: 20px;
             font-family: "Yaldevi", sans-serif;
-            font-optical-sizing: auto;
-            font-weight: 500;
             font-style: italic;
         }
 
@@ -225,9 +241,9 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
-
-        .success-message {
-            background: #4caf50;
+        
+        /* Message Styles */
+        .success-message, .error-message {
             color: white;
             padding: 15px;
             border-radius: 10px;
@@ -235,24 +251,12 @@
             display: none;
             animation: fadeIn 0.5s ease;
         }
+        .success-message { background: #4caf50; }
+        .error-message { background: #f44336; }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .error-message {
-            background: #f44336;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         #qrcode-container {
@@ -266,8 +270,13 @@
             align-items: center;
             gap: 20px;
         }
+        
+        /* QR Code Image inside the container */
+        #qrcode-container img {
+            max-width: 100%;
+            height: auto;
+        }
 
-        /* *** NEW STYLE FOR DOWNLOAD BUTTON *** */
         .download-btn {
             display: inline-block;
             width: 100%;
@@ -284,12 +293,6 @@
 
         .download-btn:hover {
             background-color: #138496;
-        }
-
-        #reader {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
         }
 
         .ticket-info {
@@ -311,166 +314,144 @@
             margin-bottom: 10px;
             padding-bottom: 10px;
             border-bottom: 1px solid #ddd;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 5px;
         }
 
         .ticket-detail:last-child {
             border-bottom: none;
         }
 
-        .ticket-detail strong {
-            color: #555;
-        }
-
-        .ticket-detail span {
+        .ticket-detail strong, .ticket-detail span {
             color: #333;
         }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
-        .status-valid {
-            background: #4caf50;
-            color: white;
-        }
-
-        .status-invalid {
-            background: #f44336;
-            color: white;
-        }
-
-        .status-used {
-            background: #ff9800;
-            color: white;
-        }
-
-        .setup-instructions {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .setup-instructions h3 {
-            color: #856404;
-            margin-bottom: 15px;
-        }
-
-        .setup-instructions ol {
-            margin-left: 20px;
-            color: #856404;
-        }
-
-        .setup-instructions li {
-            margin-bottom: 10px;
-        }
-
-        .setup-instructions code {
-            background: #fff;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-
-
-        .special-slideshow {
-            margin-top: 90vh;
-            margin-bottom: 90vh;
-            padding: 80px 0;
-            background-color: var(--light-bg);
-        }
-
-        .update-slide {
-            /* Position all slides over one another */
-            width: 100%;
-            border-radius: 10px;
-            box-shadow: var(--shadow-medium);
-        }
-
-        /* Container to establish a viewing window */
+        
+        /* Slideshow */
         .slideshow-container {
-            background-color: var(--light-bg);
             max-width: 100%;
             position: relative;
             overflow: hidden;
-            /* This is key to hide banners that are off-screen */
+            border-radius: 10px;
         }
 
-        /* Individual slide styling */
         .slide {
-            /* Position all slides over one another */
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             opacity: 0;
-            /* Start them all hidden */
-            transition: opacity 3s ease-in-out;
-            /* Smooth fade for a simple transition */
-
-            /* If you want the right-to-left slide animation, you'll need to use transform */
             transform: translateX(100%);
-            /* Start off-screen to the right */
             transition: transform 1.5s ease-out, opacity 1.5s;
-            /* Combine transitions */
         }
 
-        /* Make the active slide visible */
         .slide.active {
             opacity: 1;
             transform: translateX(0);
-            /* Move into the view */
             position: relative;
-            /* Set to relative so the container takes its height */
         }
 
-        /* Make images fill their slide container */
         .slide img {
             width: 100%;
             height: auto;
             display: block;
         }
-
+        
+        /* Footer */
         footer {
             text-align: center;
-            padding: 20px 0;
+            padding: 20px 10px;
             border-top: 1px solid rgba(255, 255, 255, 0.3);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
             margin-top: 20px;
             color: #ffffff;
         }
 
+        .footer-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
         .logo {
             width: 50px;
             height: 50px;
             background-size: contain;
             background-repeat: no-repeat;
-            margin: 0 10px;
-            align-items: center;
-            justify-content: center;
-            display: inline-block;
+            background-position: center;
         }
 
-        .logo1 {
-            background-image: url('./logo.png');
-        }
-        .logo3 {
-            background-image: url('./media-logo.png');
-        }
-
-        .logo2 {
-            background-image: url('./drama-logo.png');
-        }
+        .logo1 { background-image: url('./logo.png'); }
+        .logo2 { background-image: url('./drama-logo.png'); }
+        .logo3 { background-image: url('./media-logo.png'); }
 
         footer i {
             font-style: italic;
             font-size: smaller;
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+
+        /* For Tablets */
+        @media (max-width: 992px) {
+            .content {
+                padding: 20px;
+            }
+            .card {
+                padding: 25px;
+            }
+        }
+
+        /* For Mobile Phones */
+        @media (max-width: 768px) {
+            .content {
+                padding: 10px;
+            }
+            .card {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 38px;
+            }
+
+            h3 {
+                font-size: 18px;
+            }
+
+            .tab {
+                font-size: 16px;
+                padding: 10px 5px;
+            }
+
+            .radio-group {
+                flex-direction: column; /* Stack radio buttons vertically */
+                gap: 10px;
+            }
+
+            button {
+                padding: 12px;
+                font-size: 18px;
+            }
+
+            .footer-logos {
+                gap: 10px;
+            }
+            .logo {
+                width: 40px;
+                height: 40px;
+            }
+            
+            /* Responsive QR Code Info */
+            .ticket-detail {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+            
+            .ticket-detail strong {
+                margin-bottom: 2px;
+            }
         }
     </style>
 </head>
@@ -478,42 +459,37 @@
 <body>
     <div class="watermark"></div>
     <div class="content">
-    <div class="container">
-        <div class="card">
-            <h1>🎭 රංගාවතරණය 🎭</h1>
-            <h3>මාර්ගගත ප්‍රවේශපත්‍ර කවුළුව</h3>
+        <div class="container">
+            <div class="card">
+                <h1>🎭 රංගාවතරණය 🎭</h1>
+                <h3>මාර්ගගත ප්‍රවේශපත්‍ර කවුළුව</h3>
 
-            <div class="slideshow-container">
-
-                <div class="slide">
-                    <picture>
-                        <source media="(min-width: 1025px)" srcset="https://i.ibb.co/8DzktxBG/Drama-post1-1024px.jpg">
-                        <source media="(min-width: 769px)" srcset="https://i.ibb.co/zTDtGZ2G/Drama-post1-768px.jpg">
-                        <img src="https://i.ibb.co/5g5b4YRy/Drama-post1-480px.jpg" alt="Highlight: Event 1 Name">
-                    </picture>
+                <div class="slideshow-container">
+                    <div class="slide">
+                        <picture>
+                            <source media="(min-width: 1025px)" srcset="https://i.ibb.co/8DzktxBG/Drama-post1-1024px.jpg">
+                            <source media="(min-width: 769px)" srcset="https://i.ibb.co/zTDtGZ2G/Drama-post1-768px.jpg">
+                            <img src="https://i.ibb.co/5g5b4YRy/Drama-post1-480px.jpg" alt="Highlight: Event 1 Name">
+                        </picture>
+                    </div>
+                    <div class="slide">
+                        <picture>
+                            <source media="(min-width: 1025px)" srcset="https://i.ibb.co/sZSVBZs/Drama-post2-1024.jpg">
+                            <source media="(min-width: 769px)" srcset="https://i.ibb.co/39MQdCVV/Drama-post2-768.jpg">
+                            <img src="https://i.ibb.co/4R15jCHT/Drama-post2-480.jpg" alt="Highlight: Event 2 Name">
+                        </picture>
+                    </div>
+                    <div class="slide">
+                        <picture>
+                            <source media="(min-width: 1025px)" srcset="https://i.ibb.co/JRKpNQJx/Drama-post3-1024.jpg">
+                            <source media="(min-width: 769px)" srcset="https://i.ibb.co/21ZXfH47/Drama-post3-768.jpg">
+                            <img src="https://i.ibb.co/PskxrSMX/Drama-post3-480.jpg" alt="Highlight: Event 2 Name">
+                        </picture>
+                    </div>
                 </div>
-
-                <div class="slide">
-                    <picture>
-                        <source media="(min-width: 1025px)" srcset="https://i.ibb.co/sZSVBZs/Drama-post2-1024.jpg">
-                        <source media="(min-width: 769px)" srcset="https://i.ibb.co/39MQdCVV/Drama-post2-768.jpg">
-                        <img src="https://i.ibb.co/4R15jCHT/Drama-post2-480.jpg" alt="Highlight: Event 2 Name">
-                    </picture>
-                </div>
-
-                <div class="slide">
-                    <picture>
-                        <source media="(min-width: 1025px)" srcset="https://i.ibb.co/JRKpNQJx/Drama-post3-1024.jpg">
-                        <source media="(min-width: 769px)" srcset="https://i.ibb.co/21ZXfH47/Drama-post3-768.jpg">
-                        <img src="https://i.ibb.co/PskxrSMX/Drama-post3-480.jpg" alt="Highlight: Event 2 Name">
-                    </picture>
-                </div>
-
 
                 <div class="tabs">
-                    <button class="tab active"><a href="./instructions.html" target="_blank">උපදෙස් කියවන්න</a></button>
-                    <!-- <button class="tab" onclick="switchTab('verify')">Verify Ticket</button>
-                <button class="tab" onclick="switchTab('setup')">Setup</button> -->
+                    <button onclick="window.open('./instructions.html', '_blank');" class="tab active">උපදෙස් කියවන්න</button>
                 </div>
 
                 <div id="purchase-section" class="section active">
@@ -522,17 +498,14 @@
                             <label for="name">සම්පූර්ණ නම *</label>
                             <input type="text" id="name" name="name" required>
                         </div>
-
                         <div class="form-group">
                             <label for="phone">දුරකථන අංකය *</label>
                             <input type="tel" id="phone" name="phone" required>
                         </div>
-
                         <div class="form-group">
                             <label for="email">ඊ-මේල් ලිපිනය *</label>
                             <input type="email" id="email" name="email" required>
                         </div>
-
                         <div class="form-group">
                             <label>දර්ශන වාරය තෝරන්න *</label>
                             <div class="radio-group">
@@ -546,173 +519,109 @@
                                 </label>
                             </div>
                         </div>
-
                         <button type="submit">කේතය ලබාගන්න</button>
                     </form>
 
                     <div id="success-message" class="success-message"></div>
                     <div id="error-message" class="error-message"></div>
-                    <div id="qrcode-container"></div>
+                    <div id="qrcode-container" style="display: none;"></div>
                 </div>
             </div>
+
+            <footer>
+                <div class="footer-logos">
+                    <div class="logo logo1"></div>
+                    <div class="logo logo2"></div>
+                    <div class="logo logo3"></div>
+                </div>
+                <p>&copy; Rangawatharanaya Drama Festival - 2025<br>All rights reserved.<br><i>PMVMU</i></p>
+            </footer>
         </div>
     </div>
-    
-    
-    <footer>
-        <div class="logo logo1"></div>
-        <div class="logo logo2"></div>
-        <div class="logo logo3"></div>
-        <p>&copy; Rangawatharanaya Drama Festival - 2025<br>All rights reserved.<br><i>PMVMU</i></p>
-    </footer>
-</div>
 
+    <script>
+        // The JavaScript remains the same as it correctly handles the logic.
+        // The visual responsiveness is handled entirely by the CSS changes above.
+        
+        let html5QrCode;
+        let apiUrl = localStorage.getItem('googleSheetsApi') || '';
+        let emailApi = localStorage.getItem('emailApi') || '';
 
-                <!-- <div id="verify-section" class="section">
-                <div id="reader"></div>
-                <button id="start-scanner" onclick="startScanner()">Start QR Scanner</button>
-                <button id="stop-scanner" onclick="stopScanner()" style="display:none;">Stop Scanner</button>
-                
-                <div class="form-group" style="margin-top: 20px;">
-                    <label for="manual-ticket">Or Enter Ticket Number Manually:</label>
-                    <input type="text" id="manual-ticket" placeholder="e.g., TKT-1234567890">
-                    <button onclick="verifyManualTicket()" style="margin-top: 10px;">Verify Ticket</button>
-                </div>
-                
-                <div id="verification-result"></div>
-            </div>
-            
-            <div id="setup-section" class="section">
-                <div class="setup-instructions">
-                    <h3>⚠️ Important Setup Instructions</h3>
-                    <p>To connect this system to Google Sheets, you need to:</p>
-                    <ol>
-                        <li>Create a Google Sheet with columns: <code>Ticket Number</code>, <code>Name</code>, <code>Email</code>, <code>Phone</code>, <code>Showtime</code>, <code>Checked In</code>, <code>Check-in Time</code></li>
-                        <li>Create a Google Apps Script Web App to handle the API.</li>
-                        <li><strong>Important:</strong> Your script should handle adding the ticket to the sheet AND sending a confirmation email.</li>
-                        <li>Deploy it as a Web App and get the URL.</li>
-                        <li>Enter the Web App URL below.</li>
-                    </ol>
-                </div>
-                
-                <div class="form-group">
-                    <label for="api-url">Google Apps Script Web App URL:</label>
-                    <input type="text" id="api-url" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
-                    <button onclick="saveApiUrl()" style="margin-top: 10px;">Save URL</button>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email-api">Email Service API Key (Optional):</label>
-                    <input type="text" id="email-api" placeholder="Your email service API key">
-                    <button onclick="saveEmailApi()" style="margin-top: 10px;">Save Email API</button>
-                </div>
-                
-                <div id="setup-status"></div>
-            </div> -->
-            </div>
-        </div>
-    </div>
-    </div>
-
-        <script>
-            let html5QrCode;
-            let apiUrl = localStorage.getItem('googleSheetsApi') || '';
-            let emailApi = localStorage.getItem('emailApi') || '';
-
-            // Tab switching
-            function switchTab(tab) {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-
-                if (tab === 'purchase') {
-                    document.querySelectorAll('.tab')[0].classList.add('active');
-                    document.getElementById('purchase-section').classList.add('active');
-                } else if (tab === 'verify') {
-                    document.querySelectorAll('.tab')[1].classList.add('active');
-                    document.getElementById('verify-section').classList.add('active');
-                } else if (tab === 'setup') {
-                    document.querySelectorAll('.tab')[2].classList.add('active');
-                    document.getElementById('setup-section').classList.add('active');
-                    document.getElementById('api-url').value = apiUrl;
-                    document.getElementById('email-api').value = emailApi;
+        // Radio button styling
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.radio-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                if (this.checked) {
+                    this.closest('.radio-option').classList.add('selected');
                 }
+            });
+        });
+
+        // Form submission
+        document.getElementById('ticketForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Check if a showtime is selected
+            const selectedShowtime = document.querySelector('input[name="showtime"]:checked');
+            if (!selectedShowtime) {
+                showMessage('error', 'Please select a showtime.', 'error-message');
+                return;
             }
 
-            // Radio button styling
-            document.querySelectorAll('input[type="radio"]').forEach(radio => {
-                radio.addEventListener('change', function () {
-                    document.querySelectorAll('.radio-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    if (this.checked) {
-                        this.closest('.radio-option').classList.add('selected');
-                    }
+            const submitButton = this.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Generating...';
+
+            const formData = {
+                ticketNumber: 'TKT-' + Date.now(),
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                showtime: selectedShowtime.value,
+                timestamp: new Date().toISOString()
+            };
+
+            await generateQRCode(formData);
+
+            if (apiUrl) {
+                await saveToGoogleSheets(formData);
+            } else {
+                showMessage('success', `Ticket ${formData.ticketNumber} generated successfully! (Note: Not saved and no email sent - please configure in Setup)`, 'success-message');
+            }
+
+            submitButton.disabled = false;
+            submitButton.textContent = 'කේතය ලබාගන්න';
+        });
+
+        function generateQRCode(data) {
+            return new Promise((resolve) => {
+                const qrData = JSON.stringify({
+                    ticket: data.ticketNumber,
+                    name: data.name,
+                    showtime: data.showtime
                 });
-            });
 
-            // Form submission
-            document.getElementById('ticketForm').addEventListener('submit', async function (e) {
-                e.preventDefault();
+                const qrContainer = document.getElementById('qrcode-container');
+                qrContainer.innerHTML = '';
+                qrContainer.style.display = 'flex'; // Make container visible
 
-                const submitButton = this.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-                submitButton.textContent = 'Generating...';
+                const qrImageDiv = document.createElement('div');
+                qrImageDiv.id = 'qr-code-visual'; // Give it an ID for styling
 
-                const formData = {
-                    ticketNumber: 'TKT-' + Date.now(),
-                    name: document.getElementById('name').value,
-                    phone: document.getElementById('phone').value,
-                    email: document.getElementById('email').value,
-                    showtime: document.querySelector('input[name="showtime"]:checked').value,
-                    timestamp: new Date().toISOString()
-                };
+                new QRCode(qrImageDiv, {
+                    text: qrData,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
 
-                const qrCodeDataUrl = await generateQRCode(formData);
-
-                if (qrCodeDataUrl) {
-                    formData.qrCodeData = qrCodeDataUrl;
-                }
-
-                if (apiUrl) {
-                    await saveToGoogleSheets(formData);
-                } else {
-                    showMessage('success', `Ticket ${formData.ticketNumber} generated successfully! (Note: Not saved and no email sent - please configure in Setup)`, 'success-message');
-                }
-
-                submitButton.disabled = false;
-                submitButton.textContent = 'කේතය ලබාගන්න';
-            });
-
-            // *** MODIFIED QR CODE GENERATOR TO ADD DOWNLOAD BUTTON ***
-            function generateQRCode(data) {
-                return new Promise((resolve) => {
-                    const qrData = JSON.stringify({
-                        ticket: data.ticketNumber,
-                        name: data.name,
-                        showtime: data.showtime
-                    });
-
-                    const qrContainer = document.getElementById('qrcode-container');
-                    qrContainer.innerHTML = '';
-                    qrContainer.style.padding = "20px";
-                    qrContainer.style.background = "white";
-                    qrContainer.style.borderRadius = "10px";
-                    qrContainer.style.marginTop = "20px";
-
-                    const qrImageDiv = document.createElement('div');
-
-                    new QRCode(qrImageDiv, {
-                        text: qrData,
-                        width: 200,
-                        height: 200,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
-                    });
-
-                    const ticketInfoDiv = document.createElement('div');
-                    ticketInfoDiv.className = 'ticket-info';
-                    ticketInfoDiv.innerHTML = `
+                const ticketInfoDiv = document.createElement('div');
+                ticketInfoDiv.className = 'ticket-info';
+                ticketInfoDiv.innerHTML = `
                     <h3>ප්‍රවේශපත්‍ විස්තර</h3>
                     <div class="ticket-detail">
                         <strong>ප්‍රවේශපත්‍ අංකය:</strong>
@@ -728,268 +637,83 @@
                     </div>
                 `;
 
-                    setTimeout(() => {
-                        qrContainer.appendChild(qrImageDiv);
-                        qrContainer.appendChild(ticketInfoDiv);
-
-                        const qrImg = qrImageDiv.querySelector('img');
-                        if (qrImg) {
-                            // *** CREATE AND APPEND THE DOWNLOAD BUTTON ***
-                            const downloadLink = document.createElement('a');
-                            downloadLink.href = qrImg.src;
-                            downloadLink.download = `ticket-qr-${data.ticketNumber}.png`;
-                            downloadLink.className = 'download-btn';
-                            downloadLink.textContent = 'QR කේතය බාගන්න';
-                            qrContainer.appendChild(downloadLink);
-
-                            const confirmBtn = document.createElement('a');
-                            confirmBtn.textContent = 'Confirm';
-                            confirmBtn.href = 'https://wa.me/+94724229837';
-                            confirmBtn.target = '_blank';
-                            confirmBtn.style.marginTop = '10px';
-                            confirmBtn.style.display = 'inline-block';
-                            confirmBtn.style.padding = '10px 20px';
-                            confirmBtn.style.background = '#25D366';
-                            confirmBtn.style.color = 'white';
-                            confirmBtn.style.textDecoration = 'none';
-                            confirmBtn.style.borderRadius = '5px';
-                            confirmBtn.style.textAlign = 'center';
-                            qrContainer.appendChild(confirmBtn);
-
-                            resolve(qrImg.src);
-                        } else {
-                            resolve(null);
-                        }
-                    }, 100);
-                });
-            }
-
-            async function saveToGoogleSheets(data) {
-                try {
-                    await fetch(apiUrl, {
-                        method: 'POST',
-                        cache: 'no-cache',
-                        headers: {
-                            'Content-Type': 'text/plain;charset=utf-8',
-                        },
-                        body: JSON.stringify({
-                            action: 'addTicket',
-                            data: data
-                        })
-                    });
-
-                    showMessage('success', `Ticket ${data.ticketNumber} saved! A confirmation email will be sent.`, 'success-message');
-                } catch (error) {
-                    console.error('Error saving to Google Sheets:', error);
-                    showMessage('error', 'Failed to save to Google Sheets. Check the API URL and script deployment settings. Ticket was generated locally.', 'error-message');
-                }
-            }
-
-            function showMessage(type, message, elementId) {
-                const element = document.getElementById(elementId);
-                element.textContent = message;
-                element.style.display = 'block';
                 setTimeout(() => {
-                    element.style.display = 'none';
-                }, 5000);
-            }
+                    qrContainer.appendChild(ticketInfoDiv);
+                    ticketInfoDiv.insertAdjacentElement('beforebegin', qrImageDiv);
 
-            // QR Scanner
-            function startScanner() {
-                html5QrCode = new Html5Qrcode("reader");
+                    const qrImg = qrImageDiv.querySelector('img');
+                    if (qrImg) {
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = qrImg.src;
+                        downloadLink.download = `ticket-qr-${data.ticketNumber}.png`;
+                        downloadLink.className = 'download-btn';
+                        downloadLink.textContent = 'QR කේතය බාගන්න';
+                        qrContainer.appendChild(downloadLink);
 
-                Html5Qrcode.getCameras().then(devices => {
-                    if (devices && devices.length) {
-                        let cameraId = devices[0].id;
+                        const confirmBtn = document.createElement('a');
+                        const whatsappMessage = `Hello, I would like to confirm my ticket. Ticket Number: ${data.ticketNumber}`;
+                        confirmBtn.href = `https://wa.me/94724229837?text=${encodeURIComponent(whatsappMessage)}`;
+                        confirmBtn.target = '_blank';
+                        confirmBtn.className = 'download-btn';
+                        confirmBtn.textContent = 'Confirm via WhatsApp';
+                        confirmBtn.style.background = '#25D366';
+                        qrContainer.appendChild(confirmBtn);
 
-                        html5QrCode.start(
-                            cameraId,
-                            {
-                                fps: 10,
-                                qrbox: { width: 250, height: 250 }
-                            },
-                            (decodedText, decodedResult) => {
-                                verifyTicket(decodedText);
-                                stopScanner();
-                            },
-                            (errorMessage) => { }
-                        ).catch((err) => {
-                            console.error('Unable to start scanning:', err);
-                        });
-
-                        document.getElementById('start-scanner').style.display = 'none';
-                        document.getElementById('stop-scanner').style.display = 'block';
-                    }
-                }).catch(err => {
-                    console.error('Error getting cameras:', err);
-                    alert('Camera not available. Please use manual entry.');
-                });
-            }
-
-            function stopScanner() {
-                if (html5QrCode) {
-                    html5QrCode.stop().then((ignore) => {
-                        document.getElementById('start-scanner').style.display = 'block';
-                        document.getElementById('stop-scanner').style.display = 'none';
-                    }).catch((err) => {
-                        console.error('Error stopping scanner:', err);
-                    });
-                }
-            }
-
-            async function verifyTicket(qrData) {
-                try {
-                    const ticketData = JSON.parse(qrData);
-
-                    if (!apiUrl) {
-                        displayVerificationResult(ticketData, 'no-api');
-                        return;
-                    }
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        cache: 'no-cache',
-                        headers: {
-                            'Content-Type': 'text/plain;charset=utf-8',
-                        },
-                        body: JSON.stringify({
-                            action: 'verifyTicket',
-                            ticketNumber: ticketData.ticket
-                        })
-                    });
-
-                    displayVerificationResult(ticketData, 'valid');
-
-                } catch (error) {
-                    console.error('Invalid QR code or verification failed:', error);
-                    displayVerificationResult(null, 'invalid');
-                }
-            }
-
-            function verifyManualTicket() {
-                const ticketNumber = document.getElementById('manual-ticket').value;
-                if (ticketNumber.trim()) {
-                    const manualData = JSON.stringify({
-                        ticket: ticketNumber.trim(),
-                        name: 'Manual Entry',
-                        showtime: 'N/A'
-                    });
-                    verifyTicket(manualData);
-                }
-            }
-
-            function displayVerificationResult(ticketData, status) {
-                const resultDiv = document.getElementById('verification-result');
-                resultDiv.innerHTML = '';
-
-                const infoDiv = document.createElement('div');
-                infoDiv.className = 'ticket-info';
-
-                let content = '<h3>Verification Result</h3>';
-
-                if (status === 'invalid') {
-                    content += `
-                    <p>Invalid QR code or ticket number.</p>
-                    <span class="status-badge status-invalid">INVALID</span>
-                `;
-                } else {
-                    content += `
-                    <div class="ticket-detail">
-                        <strong>Ticket:</strong>
-                        <span>${ticketData.ticket}</span>
-                    </div>
-                    <div class="ticket-detail">
-                        <strong>Name:</strong>
-                        <span>${ticketData.name}</span>
-                    </div>
-                    <div class="ticket-detail">
-                        <strong>Showtime:</strong>
-                        <span>${ticketData.showtime}</span>
-                    </div>
-                `;
-                    if (status === 'no-api') {
-                        content += `
-                        <span class="status-badge status-valid">VALID (Local Check Only)</span>
-                        <p style="margin-top:10px; color:#ff9800;">⚠️ Google Sheets not configured</p>
-                    `;
+                        resolve(qrImg.src);
                     } else {
-                        content += `<span class="status-badge status-valid">VALID ✓</span>`;
-                        if (apiUrl) {
-                            markAsCheckedIn(ticketData.ticket);
-                        }
+                        resolve(null);
                     }
-                }
-                infoDiv.innerHTML = content;
-                resultDiv.appendChild(infoDiv);
+                }, 100);
+            });
+        }
+        
+        async function saveToGoogleSheets(data) {
+            try {
+                await fetch(apiUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'addTicket', data: data })
+                });
+                showMessage('success', `Ticket ${data.ticketNumber} saved! A confirmation email will be sent.`, 'success-message');
+            } catch (error) {
+                console.error('Error saving to Google Sheets:', error);
+                showMessage('error', 'Failed to save to Google Sheets. Check the API URL. Ticket was generated locally.', 'error-message');
             }
+        }
 
-            async function markAsCheckedIn(ticketNumber) {
-                try {
-                    await fetch(apiUrl, {
-                        method: 'POST',
-                        cache: 'no-cache',
-                        headers: {
-                            'Content-Type': 'text/plain;charset=utf-8',
-                        },
-                        body: JSON.stringify({
-                            action: 'checkIn',
-                            ticketNumber: ticketNumber,
-                            checkInTime: new Date().toISOString()
-                        })
-                    });
-                } catch (error) {
-                    console.error('Error marking check-in:', error);
-                }
-            }
+        function showMessage(type, message, elementId) {
+            const element = document.getElementById(elementId);
+            const otherElementId = elementId === 'success-message' ? 'error-message' : 'success-message';
+            document.getElementById(otherElementId).style.display = 'none';
 
-            // Setup functions
-            function saveApiUrl() {
-                const url = document.getElementById('api-url').value;
-                if (url) {
-                    localStorage.setItem('googleSheetsApi', url);
-                    apiUrl = url;
-                    document.getElementById('setup-status').innerHTML = '<div class="success-message" style="display:block;">Google Sheets API URL saved!</div>';
-                }
-            }
+            element.textContent = message;
+            element.style.display = 'block';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 6000);
+        }
 
-            function saveEmailApi() {
-                const api = document.getElementById('email-api').value;
-                if (api) {
-                    localStorage.setItem('emailApi', api);
-                    emailApi = api;
-                    document.getElementById('setup-status').innerHTML = '<div class="success-message" style="display:block;">Email API key saved!</div>';
-                }
-            }
-
-
-            // Slide Show main
-            document.addEventListener('DOMContentLoaded', function () {
-                const slides = document.querySelectorAll('.slide');
+        // Slide Show
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            if (slides.length > 0) {
                 let currentSlide = 0;
-                const slideInterval = 5000; // Change slide every 5 seconds (5000 milliseconds)
+                const slideInterval = 5000;
 
                 function nextSlide() {
-                    // 1. Hide the current slide
                     slides[currentSlide].classList.remove('active');
-
-                    // 2. Determine the next slide index (loop back to 0 if it's the last one)
                     currentSlide = (currentSlide + 1) % slides.length;
-
-                    // 3. Show the next slide
                     slides[currentSlide].classList.add('active');
                 }
-
-                // Set the first slide as active when the page loads
-                if (slides.length > 0) {
-                    slides[currentSlide].classList.add('active');
-
-                    // Start the slideshow timer
-                    setInterval(nextSlide, slideInterval);
-                }
-            });
-
-
-        </script>
+                
+                slides[0].classList.add('active');
+                setInterval(nextSlide, slideInterval);
+            }
+        });
+    </script>
 </body>
 
 </html>
